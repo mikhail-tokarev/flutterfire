@@ -11,7 +11,7 @@ workflows:
       - name: Build application
         script: |
           flutter build ios --no-codesign --simulator --debug --target=./integration_test/e2e_test.dart --dart-define=CI=true
-      - name: Start Firebase emulator
+      - name: Start Firebase Local Emulator Suite
         working_directory: ./.github/workflows/scripts
         script: |
           set -e
@@ -24,6 +24,7 @@ workflows:
           set -e
           xcrun simctl bootstatus "${SIMULATOR?}" -b
           xcrun simctl logverbose "${SIMULATOR?}" enable
+          sleep 10
       - name: Run E2E tests
         script: |
           flutter test integration_test/e2e_test.dart -d "${SIMULATOR?}" --dart-define=CI=true
@@ -34,3 +35,4 @@ workflows:
       java: 11
       vars:
         SIMULATOR: "iPhone 11"
+    max_build_duration: 20
