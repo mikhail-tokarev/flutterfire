@@ -10,6 +10,7 @@ workflows:
           flutter pub global activate flutter_plugin_tools
           sudo npm add --global firebase-tools
       - name: Build application
+        working_directory: tests
         script: |
           flutter build ios --no-codesign --simulator --debug --target=./integration_test/e2e_test.dart --dart-define=CI=true
       - name: Build Firebase Cloud Functions
