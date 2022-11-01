@@ -8,19 +8,29 @@ workflows:
           flutter pub global activate melos 2.4.0
           flutter pub global activate flutter_plugin_tools
           sudo npm add --global firebase-tools
-      - name: Ensure Firebase emulator
+      - name: Build application
+        script: |
+          flutter build ios --no-codesign --simulator --debug --target=./integration_test/e2e_test.dart --dart-define=CI=true
+      - name: Start Firebase emulator
         working_directory: ./.github/workflows/scripts
         script: |
           set -e
           cd functions
           npm ci --no-audit
           cd ..
-          firebase emulators:start --only auth,firestore,functions,storage,database --project flutterfire-e2e-tests
-      - name: Build application
+          firebase emulators:start --only auth,firestore,functions,storage,database --project flutterfire-e2e-tests &
+      - name: Start iPhone simulator
         script: |
-          flutter build ios --no-codesign --simulator --debug --target=./integration_test/e2e_test.dart --dart-define=CI=true
+          set -e
+          xcrun simctl bootstatus "${SIMULATOR?}" -b
+          xcrun simctl logverbose "${SIMULATOR?}" enable
+      - name: Run E2E tests
+        script: |
+          flutter test integration_test/e2e_test.dart -d "${SIMULATOR?}" --dart-define=CI=true
     working_directory: tests
     environment:
       flutter: stable
       node: 16
       java: 11
+      vars:
+        SIMULATOR: "iPhone 11"
