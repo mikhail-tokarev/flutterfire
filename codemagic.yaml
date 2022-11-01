@@ -15,7 +15,7 @@ workflows:
           cd functions
           npm ci --no-audit
           cd ..
-          firebase emulators:start --only auth,firestore,functions,storage,database --project flutterfire-e2e-tests &
+          firebase emulators:start --only auth,firestore,functions,storage,database --project flutterfire-e2e-tests
       - name: Build application
         script: |
           flutter build ios --no-codesign --simulator --debug --target=./integration_test/e2e_test.dart --dart-define=CI=true
