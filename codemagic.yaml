@@ -1,15 +1,25 @@
 workflows:
   e2e-ios:
     scripts:
-      # .github/workflows/scripts/install-tools.sh
-      - flutter config --no-analytics
-      - flutter pub global activate melos 2.4.0
-      - flutter pub global activate flutter_plugin_tools
-      - sudo npm i -g firebase-tools
+      - name: Install tools
+        script: |
+          set -e
+          flutter config --no-analytics
+          flutter pub global activate melos 2.4.0
+          flutter pub global activate flutter_plugin_tools
+          sudo npm add --global firebase-tools
+      - name: Ensure Firebase emulator
+        working_directory: ./.github/workflows/scripts
+        script: |
+          set -e
+          cd functions
+          npm ci --no-audit
+          cd ..
+          firebase emulators:start --only auth,firestore,functions,storage,database --project flutterfire-e2e-tests &
       - name: Build application
-        working_directory: tests
         script: |
           flutter build ios --no-codesign --simulator --debug --target=./integration_test/e2e_test.dart --dart-define=CI=true
+    working_directory: tests
     environment:
       flutter: stable
       node: 16
