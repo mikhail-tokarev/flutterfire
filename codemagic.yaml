@@ -20,19 +20,19 @@ workflows:
       - name: Ensure iPhone simulator
         script: |
           set -e
-          xcrun simctl bootstatus "${SIMULATOR?}" -b
-          xcrun simctl logverbose "${SIMULATOR?}" enable
+          xcrun simctl bootstatus "${DEVICE_ID?}" -b
+          xcrun simctl logverbose "${DEVICE_ID?}" enable
       - name: Run E2E tests
         working_directory: ./.github/workflows/scripts
         script: |
           firebase emulators:exec --only auth,firestore,functions,storage,database --project flutterfire-e2e-tests \
-            "cd $CM_BUILD_DIR/tests && flutter test integration_test/e2e_test.dart -d \"${SIMULATOR?}\" --dart-define=CI=true"
+            "cd $CM_BUILD_DIR/tests && flutter test integration_test/e2e_test.dart -d \"${DEVICE_ID?}\" --dart-define=CI=true"
     environment:
       flutter: stable
       node: 16
       java: 11
       vars:
-        SIMULATOR: "iPhone 11"
+        DEVICE_ID: "iPhone 11"
     cache:
       cache_paths:
         - $HOME/.cache/firebase/emulators
