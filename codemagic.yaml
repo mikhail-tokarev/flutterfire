@@ -1,6 +1,6 @@
 workflows:
   e2e-ios:
-    max_build_duration: 20
+    max_build_duration: 15
     scripts:
       - name: Install tools
         script: |
@@ -16,18 +16,16 @@ workflows:
         working_directory: ./.github/workflows/scripts/functions
         script: |
           npm ci --no-audit
-          # firebase emulators:start --only auth,firestore,functions,storage,database --project flutterfire-e2e-tests &
-          # until curl --output /dev/null --silent --fail http://localhost:8080; do sleep 1; done
       - name: Ensure iPhone simulator
         script: |
           set -e
           xcrun simctl bootstatus "${SIMULATOR?}" -b
           xcrun simctl logverbose "${SIMULATOR?}" enable
       - name: Run E2E tests
+        working_directory: ./.github/workflows/scripts
         script: |
           firebase emulators:exec --only auth,firestore,functions,storage,database --project flutterfire-e2e-tests \
-            "cd $CM_BUILD_DIR/tests && flutter test integration_test/e2e_test.dart -d "${SIMULATOR?} --dart-define=CI=true"
-    working_directory: tests
+            "cd $CM_BUILD_DIR/tests && flutter test integration_test/e2e_test.dart -d \"${SIMULATOR?}\" --dart-define=CI=true"
     environment:
       flutter: stable
       node: 16
