@@ -8,6 +8,7 @@ defaults:
 workflows:
   e2e-android:
     instance_type: linux_x2
+    working_directory: tests
     scripts:
       - name: Install tools
         script: |
@@ -18,9 +19,14 @@ workflows:
           flutter config --no-enable-web --no-enable-ios --no-enable-macos-desktop
           sudo npm add --global firebase-tools
       - name: Build Android application
-        working_directory: tests
         script: |
           flutter build apk --debug --target=./integration_test/e2e_test.dart --dart-define=CI=true --no-android-gradle-daemon
+      - name: Run E2E tests
+        script: |
+          $ANDROID_HOME/platform-tools/adb logcat '*:D' > $HOME/adb-log.txt &
+          flutter test integration_test/e2e_test.dart --dart-define=CI=true
+    artifacts:
+      - $HOME/adb-log.txt
     environment:
       <<: *e2e_tests
 
