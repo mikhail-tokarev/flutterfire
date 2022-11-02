@@ -75,6 +75,3 @@ workflows:
       <<: *e2e_tests
       vars:
         DEVICE_ID: "iPhone 11"
-    cache:
-      cache_paths:
-        - $HOME/.cache/firebase/emulators
