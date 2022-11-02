@@ -1,4 +1,18 @@
+defaults:
+  environment: &e2e_env
+    flutter: stable
+    node: 16
+    java: 11
+
+
 workflows:
+  e2e-android:
+    instance_type: linux_x2
+    scripts:
+      - echo 123
+    environment:
+      <<: *e2e_env
+
   e2e-ios:
     max_build_duration: 15
     scripts:
@@ -28,9 +42,7 @@ workflows:
           firebase emulators:exec --only auth,firestore,functions,storage,database --project flutterfire-e2e-tests \
             "cd $CM_BUILD_DIR/tests && flutter test integration_test/e2e_test.dart -d \"${DEVICE_ID?}\" --dart-define=CI=true"
     environment:
-      flutter: stable
-      node: 16
-      java: 11
+      <<: *e2e_env
       vars:
         DEVICE_ID: "iPhone 11"
     cache:
