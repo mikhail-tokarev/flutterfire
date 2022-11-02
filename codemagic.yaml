@@ -90,6 +90,10 @@ workflows:
         working_directory: tests
         script: |
           flutter build macos --debug --target=./integration_test/e2e_test.dart --device-id=macos --dart-define=CI=true
+      - name: Build Firebase Cloud Functions
+        working_directory: ./.github/workflows/scripts/functions
+        script: |
+          npm ci --no-audit
       - name: Run E2E tests
         working_directory: ./.github/workflows/scripts
         script: |
