@@ -1,8 +1,8 @@
 defaults:
-  environment: &e2e_tests
-    flutter: stable
-    node: 16
-    java: 11
+  - environment: &e2e_tests
+      flutter: stable
+      node: 16
+      java: 11
 
 
 workflows:
