@@ -8,6 +8,7 @@ defaults:
 workflows:
   e2e-android:
     instance_type: linux_x2
+    max_build_duration: 15
     scripts:
       - name: Install tools
         script: |
