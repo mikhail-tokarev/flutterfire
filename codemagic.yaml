@@ -21,9 +21,14 @@ workflows:
       - name: Build Android application
         script: |
           flutter build apk --debug --target=./integration_test/e2e_test.dart --dart-define=CI=true --no-android-gradle-daemon
+      - name: Ensure Android emulator
+        script: |
+          set -e
+          flutter emulators --launch emulator &
+          adb logcat '*:D' > $HOME/adb-log.txt &
+          adb wait-for-device
       - name: Run E2E tests
         script: |
-          $ANDROID_HOME/platform-tools/adb logcat '*:D' > $HOME/adb-log.txt &
           flutter test integration_test/e2e_test.dart --dart-define=CI=true
     artifacts:
       - $HOME/adb-log.txt
