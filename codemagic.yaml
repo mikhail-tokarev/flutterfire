@@ -8,7 +8,6 @@ defaults:
 workflows:
   e2e-android:
     instance_type: linux_x2
-    working_directory: tests
     scripts:
       - name: Install tools
         script: |
@@ -19,11 +18,17 @@ workflows:
           flutter config --no-enable-web --no-enable-ios --no-enable-macos-desktop
           sudo npm add --global firebase-tools
       - name: Build Android application
+        working_directory: tests
         script: |
           flutter build apk --debug --target=./integration_test/e2e_test.dart --dart-define=CI=true --no-android-gradle-daemon
+      - name: Build Firebase Cloud Functions
+        working_directory: ./.github/workflows/scripts/functions
+        script: |
+          npm ci --no-audit
       - name: Ensure Android emulator
         script: |
           set -e
+          adb start-server
           flutter emulators --launch emulator &
           adb logcat '*:D' > $HOME/adb-log.txt &
           adb wait-for-device
