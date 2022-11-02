@@ -78,7 +78,6 @@ workflows:
 
   e2e-macos:
     instance_type: mac_pro
-    max_build_duration: 15
     scripts:
       - keychain initialize
       - name: Install tools
