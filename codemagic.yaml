@@ -77,7 +77,6 @@ workflows:
         DEVICE_ID: "iPhone 11"
 
   e2e-macos:
-    instance_type: mac_pro
     scripts:
       - keychain initialize
       - name: Install tools
