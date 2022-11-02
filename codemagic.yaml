@@ -1,5 +1,5 @@
 defaults:
-  environment: &e2e_env
+  environment: &e2e_tests
     flutter: stable
     node: 16
     java: 11
@@ -9,9 +9,19 @@ workflows:
   e2e-android:
     instance_type: linux_x2
     scripts:
-      - echo 123
+      - name: Install tools
+        script: |
+          set -e
+          flutter config --no-analytics
+          flutter pub global activate melos 2.4.0
+          flutter pub global activate flutter_plugin_tools
+          flutter config --no-enable-web --no-enable-ios --no-enable-macos-desktop
+          sudo npm add --global firebase-tools
+      - name: Build Android application
+        script: |
+          flutter build apk --debug --target=./integration_test/e2e_test.dart --dart-define=CI=true --no-android-gradle-daemon
     environment:
-      <<: *e2e_env
+      <<: *e2e_tests
 
   e2e-ios:
     max_build_duration: 15
@@ -23,7 +33,7 @@ workflows:
           flutter pub global activate melos 2.4.0
           flutter pub global activate flutter_plugin_tools
           sudo npm add --global firebase-tools
-      - name: Build application
+      - name: Build iOS application
         working_directory: tests
         script: |
           flutter build ios --no-codesign --simulator --debug --target=./integration_test/e2e_test.dart --dart-define=CI=true
@@ -42,7 +52,7 @@ workflows:
           firebase emulators:exec --only auth,firestore,functions,storage,database --project flutterfire-e2e-tests \
             "cd $CM_BUILD_DIR/tests && flutter test integration_test/e2e_test.dart -d \"${DEVICE_ID?}\" --dart-define=CI=true"
     environment:
-      <<: *e2e_env
+      <<: *e2e_tests
       vars:
         DEVICE_ID: "iPhone 11"
     cache:
