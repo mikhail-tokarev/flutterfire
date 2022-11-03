@@ -77,7 +77,7 @@ workflows:
         DEVICE_ID: "iPhone 11"
 
   e2e-macos:
-    instance_type: mac_mini
+    max_build_duration: 15
     scripts:
       - name: Install tools
         script: |
