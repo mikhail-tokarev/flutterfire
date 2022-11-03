@@ -103,6 +103,7 @@ workflows:
       <<: *e2e_tests
 
   e2e-web:
+    instance_type: linux_x2
     scripts:
       - name: Install tools
         script: |
