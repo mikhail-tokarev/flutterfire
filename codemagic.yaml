@@ -116,6 +116,17 @@ workflows:
         working_directory: ./.github/workflows/scripts/functions
         script: |
           npm ci --no-audit
+      - name: Install chromedriver
+        script: |
+          # https://sites.google.com/a/chromium.org/chromedriver/downloads/version-selection
+          set -e
+          CHROME_VERSION=$(google-chrome --version | awk -F '.' '{print substr($1, 15),$2,$3}' OFS='.')
+          CHROMEDRIVER_VERSION=$(curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION)
+
+          curl --output chromedriver.zip https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
+
+          unzip chromedriver.zip
+          mv chromedriver /usr/local/bin/
       - name: Run E2E tests
         working_directory: ./.github/workflows/scripts
         script: |
